@@ -5,12 +5,14 @@ import java.util.stream.IntStream;
 public class LazyStreams {
 
     public static int multByTwo(int n) {
-        System.out.printf("Inside multByTwo with arg %d%n", n);
+        System.out.println("Inside multByTwo with arg n = " + n +
+                " and thread " + Thread.currentThread().getName());
         return n * 2;
     }
 
     public static boolean modByThree(int n) {
-        System.out.printf("Inside modByThree with arg %d%n", n);
+        System.out.println("Inside modByThree with n = " + n +
+                " and thread " + Thread.currentThread().getName());
         return n % 3 == 0;
     }
 
@@ -24,6 +26,7 @@ public class LazyStreams {
 
         // Demonstrate laziness using print statements
         firstEvenDoubleDivBy3 = IntStream.range(100, 2_000_000)
+                // .parallel()
                 .map(LazyStreams::multByTwo)
                 .filter(LazyStreams::modByThree)
                 .findFirst().orElse(0);

@@ -22,7 +22,7 @@ public class SortGolfers {
                 .forEach(System.out::println);
     }
 
-    // sort by score, then by last name
+    // sort by score, then equal scores by last name
     public void sortByScoreThenLast() {
         golfers.stream()
                 .sorted(Comparator.comparingInt(Golfer::getScore)
@@ -52,9 +52,9 @@ public class SortGolfers {
 
     public static void main(String[] args) {
         SortGolfers sg = new SortGolfers();
-        // sg.defaultSort();
+//        sg.defaultSort();
 //        sg.sortByScoreThenLast();
         sg.sortByScoreThenLastThenFirst();
-        // sg.partitionByScore();
+//         sg.partitionByScore();
     }
 }

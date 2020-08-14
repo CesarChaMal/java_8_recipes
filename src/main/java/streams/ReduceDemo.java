@@ -64,6 +64,8 @@ public class ReduceDemo {
                 .reduce(Integer.MIN_VALUE, Integer::max);
         System.out.println("The max value is " + max);
 
+        Integer maxValue = IntStream.of(3, 1, 4, 1, 5, 9).max().orElse(0);
+
 
         /* String example */
         // Inefficient, but works
@@ -86,13 +88,13 @@ public class ReduceDemo {
                 .toString();
 
         // Best (or at least simplest)
-        s = Stream.of("this", "is", "a", "list")
-                .collect(Collectors.joining());
+        s = String.join("", "this", "is", "a", "list");
 
         List<Book> books = Arrays.asList(
-                new Book(1, "Modern Java Recipes"),
+                new Book(3, "Modern Java Recipes"),
                 new Book(2, "Making Java Groovy"),
-                new Book(3, "Gradle Recipes for Android"));
+                new Book(1, "Gradle Recipes for Android"),
+                new Book(4, "Kotlin Cookbook"));
 
         // Note: this is the HARD way; see AddCollectionToMap for easier ways
         SortedMap<Integer, Book> bookMap = books.stream()

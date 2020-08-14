@@ -1,16 +1,13 @@
 package mapvsflatmap;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("Convert2MethodRef")
 public class UsePerson {
-    private static List<String> names =
+    private static final List<String> names =
             Arrays.asList("Grace Hopper", "Frances Allen", "Ada Lovelace",
-                    "Barbara Liskov", "Adele Goldberg", "Karen Spärck Jones");
+                          "Barbara Liskov", "Adele Goldberg", "Karen Spärck Jones");
 
     public List<String> getNames() {
         return names;
@@ -24,42 +21,66 @@ public class UsePerson {
         return people;
     }
 
+    private Person createPerson(String name) {
+        return new Person(name);
+    }
+
     public List<Person> createPersonList() {
-        return names.stream()                     // Stream<String>
-                .map(name -> new Person(name))    // Stream<Person>
-                .collect(Collectors.toList());    // List<Person>
+        return names.stream()                         // Stream<String>
+                    .map(name -> new Person(name))    // Stream<Person>
+                    .collect(Collectors.toList());    // List<Person>
     }
 
     public List<Person> createPersonList_CtorRef() {
         return names.stream()
-                .map(Person::new)  // invoke the one-arg Person ctor that takes String
-                .collect(Collectors.toList());
+                    .map(Person::new)  // invoke the one-arg Person ctor that takes String
+                    .collect(Collectors.toList());
     }
 
     public List<Person> createPersonList_2ArgCtrRef() {
-        return names.stream()                  // Stream<String>
-                .map(name -> name.split(" "))  // Stream<String[]>
-                .map(Person::new)              // Stream<Person> using String... ctor
-                .map(Person::new)              // Stream<Person> copies using the copy ctor
-                .collect(Collectors.toList());
+        return names.stream()                      // Stream<String>
+                    .map(name -> name.split(" "))  // Stream<String[]>
+                    .map(Person::new)              // Stream<Person> using String... ctor
+                    .map(Person::new)              // Stream<Person> copies using the copy ctor
+                    .collect(Collectors.toList());
     }
 
     public List<Person> createPersonLinkedList() {
         return names.stream()
-                .map(Person::new)
-                .collect(Collectors.toCollection(LinkedList::new));
+                    .map(Person::new)
+                    //.collect(Collectors.toCollection(() -> new LinkedList<>()));
+                    .collect(Collectors.toCollection(LinkedList::new));
     }
 
     public Person[] createPersonArray() {
         return names.stream()
-                .map(Person::new)
-                .toArray(Person[]::new);
+                    .map(Person::new)
+                    .toArray(Person[]::new);
     }
 
+
+    // 1..5 | 6..10 | 11..15 | 16..20
+    // add each element to LinkedList and return it (sequential)
+    // Say we are using a parallel stream with four processors
+    //  R1     R2       R3       R4
+    //               R
     public List<Person> createPersonListUsingNew() {
         return names.stream()
-                .map(Person::new)
-                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+                    // .parallel()
+                    .map(Person::new)
+                    .collect(LinkedList::new,     // Supplier<LinkedList>
+                             LinkedList::add,     // BiConsumer<LinkedList,Person>
+                             LinkedList::addAll); // BiConsumer<LinkedList,LinkedList>
+    }
+
+    @SuppressWarnings("Convert2Diamond")
+    public List<Person> createPersonListUsingNewWithLambdas() {
+        return names.stream()
+                    .map(Person::new)
+                    .collect(() -> new LinkedList<Person>(),
+                             (people, person) -> people.add(person),
+                             (totalCollection, people) ->
+                                     totalCollection.addAll(people)); // not called unless parallel
     }
 
 }
